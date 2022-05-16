@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { Container, Grid, CssBaseline, Typography, Snackbar, Alert, TextField, Box, Avatar, Button } from '@mui/material'
+import { Grid, CssBaseline, Typography, Snackbar, Alert, TextField, Box, Avatar, Button } from '@mui/material'
 import { Link, useNavigate } from "react-router-dom"
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { url } from '../config.js'
+import { loginScreenImage } from './utilities/images.js'
+import { invalidEmail, invalidPassword, requiredEmail, requiredPassword } from './utilities/validationMessages.js'
 
 const initialState = {
   open: false,
@@ -31,8 +33,7 @@ const SignIn = (props) => {
     
     const data = getValues();
     
-    let updatedUrl = url + "/auth/signin"
-    axios.post(updatedUrl, data).then((res) => {
+    axios.post(`${url}/auth/signin`, data).then((res) => {
 
       if(res.data.status === 'error') {
         console.log("error");
@@ -108,7 +109,7 @@ const SignIn = (props) => {
             xs={false} 
             sm={6} 
             sx={{
-              backgroundImage: "url(/images/login-img1.jpg)",
+              backgroundImage: `url(${loginScreenImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat'
@@ -145,10 +146,10 @@ const SignIn = (props) => {
                       name="email"
                       autoComplete="email"
                       {...register("email", {
-                        required : "Email is required", 
+                        required : requiredEmail, 
                         pattern: { 
                           value: /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/, 
-                          message: "Enter valid email"
+                          message: invalidEmail
                         } 
                       })}
                       error={!!errors.email}
@@ -165,10 +166,10 @@ const SignIn = (props) => {
                       id="password"
                       autoComplete="new-password"
                       {...register("password", { 
-                        required: "Password is required",
+                        required: requiredPassword,
                         pattern: {
                           value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
-                          message: "Password should be of at least 8 characters including Capital, Small and Special character with at least one number"
+                          message: invalidPassword
                         }
                       })}
                       error={!!errors.password}

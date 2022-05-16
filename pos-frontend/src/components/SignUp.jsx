@@ -1,9 +1,12 @@
-import { Container, Grid, CssBaseline, Typography, TextField, Box, Avatar, Button, Snackbar, Alert } from '@mui/material'
+import { Grid, CssBaseline, Typography, TextField, Box, Avatar, Button, Snackbar, Alert } from '@mui/material'
 import { Link, useNavigate } from "react-router-dom"
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { useState } from 'react'
+import { url } from '../config'
+import { loginScreenImage } from './utilities/images'
+import { invalidEmail, invalidPassword, notMatchConfirmPassword, requiredConfirmPassword, requiredEmail, requiredFirstName, requiredLastName, requiredPassword } from './utilities/validationMessages'
 
 const initialState = {
   open: false,
@@ -20,7 +23,7 @@ const SignUp = (props) => {
   const onSubmit = () => {
     const userData = getValues();
 
-    axios.post("http://localhost:5000/api/auth/signup", userData).then((res) => {
+    axios.post(`${url}/auth/signup`, userData).then((res) => {
 
       console.log(res);
 
@@ -80,7 +83,7 @@ const SignUp = (props) => {
             xs={false} 
             sm={6} 
             sx={{
-              backgroundImage: "url(/images/login-img1.jpg)",
+              backgroundImage: `url(${loginScreenImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat'
@@ -114,7 +117,7 @@ const SignUp = (props) => {
                       fullWidth
                       label="First Name"
                       autoFocus
-                      {...register("firstName", { required: "Firstname is required"})}
+                      {...register("firstName", { required: requiredFirstName})}
                       error={!!errors.firstName}
                       helperText={errors?.firstName ? errors.firstName.message : null}
                     />
@@ -124,7 +127,7 @@ const SignUp = (props) => {
                       required
                       fullWidth
                       id="lastName"
-                      {...register("lastName", { required: "Lastname is required"})}
+                      {...register("lastName", { required: requiredLastName})}
                       error={!!errors.lastName}
                       helperText={errors?.lastName ? errors.lastName.message : null}
                       label="Last Name"
@@ -141,10 +144,10 @@ const SignUp = (props) => {
                       name="email"
                       autoComplete="email"
                       {...register("email", { 
-                        required: "Email is required", 
+                        required: requiredEmail, 
                         pattern: { 
                           value: /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/, 
-                          message: "Enter Valid email"
+                          message: invalidEmail
                         } 
                       })}
                       error={!!errors.email}
@@ -161,10 +164,10 @@ const SignUp = (props) => {
                       id="password"
                       autoComplete="new-password"
                       {...register("password", { 
-                        required: "Password is required",
+                        required: requiredPassword,
                         pattern: {
                           value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
-                          message: "Password should be of at least 8 characters including Capital, Small and Special character with at least one number"
+                          message: invalidPassword
                         }
                       })}
                       error={!!errors.password}
@@ -180,10 +183,10 @@ const SignUp = (props) => {
                       type="password"
                       id="confirmPassword"
                       {...register("confirmPassword", { 
-                        required: "Confirm password is required",
+                        required: requiredConfirmPassword,
                         validate: (val) => {
                           if(watch('password') !== val) {
-                            return "Password does not match"
+                            return notMatchConfirmPassword
                           }
                         }
                       })}
