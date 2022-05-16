@@ -1,0 +1,1 @@
+export const loginScreenImage = '/images/login-img1.jpg'
